@@ -5,21 +5,14 @@ import TopAppBar from './Components/AppBar'
 import { getTokenBySymbol, toHex, spliceNoMutate } from './utils';
 import { MenuItem, Button, ButtonGroup, OutlinedInput, InputAdornment } from '@material-ui/core';
 import { Paper, Grid, CssBaseline, Container, InputBase, Theme, Select  } from '@material-ui/core';
-import { ThemeProvider, createMuiTheme, makeStyles, createStyles, withStyles } from '@material-ui/core/styles';
+import { ThemeProvider, makeStyles, createStyles, withStyles } from '@material-ui/core/styles';
 import {ethers} from 'ethers'
 import { initOnboard, initNotify } from './Services/Blocknative'
 import { API } from "bnc-onboard/dist/src/interfaces";
 import { RinkebyTokens } from './Data/RinkbeyTokens'
 import BalanceButton from './Components/BalanceButton'
 import Background from './Assets/background-green.jpg';
-
-
-interface TradeToken {
-  name: string
-  symbol: string
-  address: string
-  decimals: number
-}
+import themeDark from './Themes/darkTheme'
 
 declare global {
   interface Window {
@@ -86,7 +79,6 @@ const TokenSelector = withStyles((theme: Theme) =>
 )(InputBase);
 
 let provider: any;
-let ethereum = window.ethereum;
 
 function App() {
 
@@ -94,47 +86,13 @@ function App() {
   const actions: any = globalActions;
   
   const [tokenslist, setTokensList] = useState<any | any[]>(RinkebyTokens);
-  const [token1, settoken1] = useState<TradeToken>({name: "", symbol: "", address: "", decimals: 0});
-  const [token2, settoken2] = useState<TradeToken>({name: "", symbol: "", address: "", decimals: 0});
-
   const [currentTrade, setCurrentTrade] = useState<Trade>();
-
-  const [darkmode, setDarkMode] = useState<boolean>(true);
-
   const [onboard, setOnboard] = useState<API>()
   const [notify, setNotify] = useState<any>()
 
   const NETWORK_ID = 4; // Working network, to be selectable in the future (Mainnet 1, Ropsten 3 and Rinkeby 4)
   const WEI_TO_ETH = 1000000000000000000;
 
-  const themeDark = createMuiTheme({
-    palette: {
-      primary: {main: '#24806c'},
-      secondary: {main: "#181a1c"},
-      background: {
-        default: "#222222",
-        paper: "#222222",
-      },
-      text: {
-        primary: "#ffffff"
-      }
-    },
-    typography: {
-      fontFamily: [
-        'Roboto',
-        '-apple-system',
-        'BlinkMacSystemFont',
-        '"Segoe UI"',
-        '"Helvetica Neue"',
-        'Arial',
-        'sans-serif',
-        '"Apple Color Emoji"',
-        '"Segoe UI Emoji"',
-        '"Segoe UI Symbol"',
-      ].join(','),
-    },
-  });
-  
   const classes = useStyles(); 
 
   // On Mount 
@@ -176,13 +134,13 @@ function App() {
 
   // Fetch balance of selected Token1
   useEffect(() => {
-    actions.fetchBalance(provider, globalState.address, token1, 1);
-  }, [token1]);
+    actions.fetchBalance(provider, globalState.address, globalState.token1, 1);
+  }, [globalState.token1]);
 
   // Fetch balance of selected Token2
   useEffect(() => {
-    actions.fetchBalance(provider, globalState.address, token2, 2);
-  }, [token2]);
+    actions.fetchBalance(provider, globalState.address, globalState.token2, 2);
+  }, [globalState.token2]);
 
   // Verifies if wallet has already been selected and checks up
   const readyToTransact = async () => {
@@ -200,8 +158,8 @@ function App() {
     // Get realtime price of token1 based on paired token2
     const getPrice = async () => {
       if(globalState.walletnetwork == NETWORK_ID){
-        const tradetoken1 = await Fetcher.fetchTokenData(globalState.walletnetwork, ethers.utils.getAddress(token1.address), provider); 
-        const tradetoken2 = await Fetcher.fetchTokenData(globalState.walletnetwork, ethers.utils.getAddress(token2.address), provider);
+        const tradetoken1 = await Fetcher.fetchTokenData(globalState.walletnetwork, ethers.utils.getAddress(globalState.token1.address), provider); 
+        const tradetoken2 = await Fetcher.fetchTokenData(globalState.walletnetwork, ethers.utils.getAddress(globalState.token2.address), provider);
         const pair = await Fetcher.fetchPairData(tradetoken1, tradetoken2, provider);
         const route = new Route([pair], tradetoken1);
         const trade = new Trade(route, new TokenAmount(tradetoken1, (BigInt((parseFloat(globalState.inputToken1))*(WEI_TO_ETH))).toString()), TradeType.EXACT_INPUT);
@@ -220,7 +178,7 @@ function App() {
       if(currentTrade != undefined && readyToTransact()){
         const slippageTolerance = new Percent((globalState.tolerance*100).toString(), '10000');
         const amountOutMin = toHex(currentTrade.minimumAmountOut(slippageTolerance).raw);
-        const path = [ethers.utils.getAddress(token1.address), ethers.utils.getAddress(token2.address)];
+        const path = [ethers.utils.getAddress(globalState.token1.address), ethers.utils.getAddress(globalState.token2.address)];
         const to = globalState.address; // Sends to selected address on wallet
         const tradedeadline = Math.floor(Date.now() / 1000) + 60 * parseInt(globalState.deadline); // Maximum wait time for transaction (20min)
         const value = toHex(currentTrade.inputAmount.raw);
@@ -229,11 +187,11 @@ function App() {
         var uniswap;
         var tx;
 
-        if(token1.symbol == 'WETH' || token1.symbol == 'ETH'){
+        if(globalState.token1.symbol == 'WETH' || globalState.token1.symbol == 'ETH'){
           uniswap = new ethers.Contract(ethers.utils.getAddress('0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'), ['function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)'], signer);
           tx = await uniswap.swapExactETHForTokens(amountOutMin, path, to, tradedeadline, {value});
         }
-        else if(token2.symbol == 'WETH' || token2.symbol == 'ETH'){
+        else if(globalState.token2.symbol == 'WETH' || globalState.token2.symbol == 'ETH'){
           uniswap = new ethers.Contract(ethers.utils.getAddress('0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'), ['function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external returns (uint[] memory amounts)'], signer);
           tx = await uniswap.swapExactTokensForETH(value, amountOutMin, path, to, tradedeadline);
         }
@@ -261,8 +219,8 @@ function App() {
   
         const receipt = await tx.wait();
         console.log("Transaction was mined in block:", receipt.blockNumber);
-        actions.fetchBalance(provider, globalState.address, token1, 1);; // Sets new balane for Token1 after transaction
-        actions.fetchBalance(provider, globalState.address, token2, 2);; // Sets new balane for Token1 after transaction
+        actions.fetchBalance(provider, globalState.address, globalState.token1, 1);; // Sets new balane for Token1 after transaction
+        actions.fetchBalance(provider, globalState.address, globalState.token2, 2);; // Sets new balane for Token1 after transaction
       }
       else{
         console.log("Current Trade not defined")
@@ -273,7 +231,7 @@ function App() {
   const handleChange1 = (event: any) => {
     actions.changeSelectToken1(event.target.value);
     var token_temp = getTokenBySymbol(tokenslist, event.target.value);
-    settoken1({name: token_temp.name, symbol: token_temp.symbol, address: token_temp.id, decimals: token_temp.decimals});
+    actions.changeToken1({name: token_temp.name, symbol: token_temp.symbol, address: token_temp.id, decimals: token_temp.decimals});
     actions.changeInputToken1('');
     actions.changeInputToken2('');
   };
@@ -288,7 +246,7 @@ function App() {
   const handleChange2 = (event: any) => {
     actions.changeSelectToken2(event.target.value);
     var token_temp = getTokenBySymbol(tokenslist, event.target.value);
-    settoken2({name: token_temp.name, symbol: token_temp.symbol, address: token_temp.id, decimals: token_temp.decimals});
+    actions.changeToken2({name: token_temp.name, symbol: token_temp.symbol, address: token_temp.id, decimals: token_temp.decimals});
     actions.changeInputToken1('');
     actions.changeInputToken2('');
   };
@@ -307,11 +265,6 @@ function App() {
     }
   };
 
-  // Handler to interact with Darkmode switch and store its values
-  const handleDarkModeSwitch = (newValue: boolean) => {
-    setDarkMode(newValue)
-  }
-
   const isReadyToSwap = () => {
     if((globalState.inputToken2=='')||(globalState.deadline=='')||(globalState.walletnetwork==undefined)||(globalState.balance1==undefined)||(parseFloat(globalState.inputToken1)>parseFloat(globalState.balance1))){
       return false;
@@ -325,7 +278,7 @@ function App() {
     <ThemeProvider theme={themeDark}>
       <div className={classes.root} data-testid="App">
         <CssBaseline />
-        <TopAppBar address={globalState.address} onboard={onboard} network={globalState.walletnetwork} onChange={handleDarkModeSwitch} darkmode={darkmode}></TopAppBar>
+        <TopAppBar onboard={onboard}></TopAppBar>
         <br/>
         <br/>
         <Container>
@@ -338,7 +291,7 @@ function App() {
               
                   <Grid item container spacing={2} direction={'row'} alignItems={'center'} justify={'flex-end'}>
                     <Grid item>
-                      {globalState.balance1 ? `Balance: ${(parseFloat(globalState.balance1)).toFixed(6).toString()} ${token1.symbol}` : 'Balance:'}
+                      {globalState.balance1 ? `Balance: ${(parseFloat(globalState.balance1)).toFixed(6).toString()} ${globalState.token1.symbol}` : 'Balance:'}
                     </Grid> 
                     <Grid item>
                       <BalanceButton ></BalanceButton>
@@ -357,7 +310,7 @@ function App() {
                   </Grid>
                   <Grid item>
                     <OutlinedInput inputProps={{ "data-testid": "Input1" }} className={classes.input} placeholder="0.0" value={globalState.inputToken1} style = {{width: 230}} color="primary" onChange={handleInputChange1} type="number" error={parseFloat(globalState.inputToken1)<=0}
-                      endAdornment={<InputAdornment className={classes.inputAdorment} position="end">{token1.symbol}</InputAdornment>}/>
+                      endAdornment={<InputAdornment className={classes.inputAdorment} position="end">{globalState.token1.symbol}</InputAdornment>}/>
                   </Grid>
                 </Grid> 
 
@@ -371,7 +324,7 @@ function App() {
 
                 <Grid item container spacing={2} direction={'row'} alignItems={'center'} justify={'flex-end'}>
                   <Grid item>
-                    {globalState.balance2 ? `Balance: ${(parseFloat(globalState.balance2)).toFixed(6).toString()} ${token2.symbol}` : 'Balance:'}
+                    {globalState.balance2 ? `Balance: ${(parseFloat(globalState.balance2)).toFixed(6).toString()} ${globalState.token2.symbol}` : 'Balance:'}
                   </Grid> 
                 </Grid>
 
@@ -387,7 +340,7 @@ function App() {
                   </Grid>
                   <Grid item>
                   <OutlinedInput inputProps={{ "data-testid": "Input2" }} className={classes.input}  placeholder="0.0" value={globalState.inputToken2} style = {{width: 230}} color="primary" type="number"
-                      endAdornment={<InputAdornment className={classes.inputAdorment} position="end">{token2.symbol}</InputAdornment>}/>
+                      endAdornment={<InputAdornment className={classes.inputAdorment} position="end">{globalState.token2.symbol}</InputAdornment>}/>
                   </Grid>
                 </Grid> 
 

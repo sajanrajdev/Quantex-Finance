@@ -1,5 +1,6 @@
 import React from "react";
 import useGlobalHook from "use-global-hook";
+import { API } from "bnc-onboard/dist/src/interfaces";
 
 import * as actions from "../Actions";
 
@@ -22,12 +23,21 @@ const initialState = {
     address: '',
     decimals: 0
   },
-  currentTrade: {},
+  currentTrade: '',/* {
+    route: {},
+    tradeType: 0,
+    inputAmount: '',
+    outputAmount: '',
+    executionPrice: '',
+    nextMidPrice: '',
+    priceImpact: ''
+  }, */
   balance1: '',
   balance2: '',
   wallet: {},
   address: '',
   walletnetwork: 4,
+  darkmode: true,
 };
 
 const useGlobal = useGlobalHook(React, initialState, actions);

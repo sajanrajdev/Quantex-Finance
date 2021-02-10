@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import useGlobal from "../Store";
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -38,9 +39,15 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   }));
 
-export default function TopAppBar({address, onboard, network, onChange, darkmode}:{address: any | any[] , onboard: any, network: any, onChange: any, darkmode:boolean}) {
+export default function TopAppBar({onboard}:{onboard: any}) {
   const classes = useStyles();
   const [buttonstatus, setButtonStatus] = useState<string | null>('Connect Wallet');
+  const [globalState, globalActions] = useGlobal();
+  const actions: any = globalActions;
+
+  const address = globalState.address;
+  const network = globalState.walletnetwork;
+  const darkmode = globalState.darkmode;
 
   useEffect(() => {
     const previouslySelectedWallet = window.localStorage.getItem(
@@ -55,10 +62,10 @@ export default function TopAppBar({address, onboard, network, onChange, darkmode
 
   const handleDarkModeSwitch = () => {
     if(darkmode){
-      onChange(false);
+      actions.changeDarkMode(false);
     }
     else{
-      onChange(true);
+      actions.changeDarkMode(true);
     }
   }
 
@@ -84,7 +91,7 @@ export default function TopAppBar({address, onboard, network, onChange, darkmode
               }
             }}>{buttonstatus}</Button></Grid>
           </Grid>
-          <Switch color="secondary" onChange={handleDarkModeSwitch}></Switch>
+          <Switch color="primary" onChange={handleDarkModeSwitch}></Switch>
           <SeetingsMenu />
         </Toolbar>
       </AppBar>

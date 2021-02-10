@@ -1,6 +1,7 @@
 import { Trade } from '@uniswap/sdk'
 import { getERC20TokenBalance } from '../utils';
 import {ethers} from 'ethers'  
+import { API } from "bnc-onboard/dist/src/interfaces";
 
 interface TradeToken {
     name: string
@@ -31,12 +32,10 @@ export const changeInputToken2 = (store: any, value: string) => {
 };
 
 export const changeSelectToken1 = (store: any, value: string) => {
-    console.log(value);
     store.setState( { selectToken1: value } );
 };
 
 export const changeSelectToken2 = (store: any, value: string) => {
-    console.log(value);
     store.setState( { selectToken2: value } );
 };
 
@@ -61,7 +60,6 @@ export const changeBalance2 = (store: any, value: string | undefined) => {
 };
 
 export const changeWallet = (store: any, value: any) => {
-    
     store.setState( { wallet: value } );
 };
 
@@ -71,6 +69,18 @@ export const changeAddress = (store: any, value: string) => {
 
 export const changeWalletNetwork = (store: any, value: number) => {
     store.setState( { walletnetwork: value } );
+};
+
+export const changeDarkMode = (store: any, value: boolean) => {
+    store.setState( { darkmode: value } );
+};
+
+export const changeOnboard = (store: any, value: API) => {
+    store.setState( { onboard: value } );
+};
+
+export const changeNotify = (store: any, value: any) => {
+    store.setState( { notify: value } );
 };
 
 export const fetchBalance = async (store: any, provider: any, address: string | undefined, token1: any, tokenNumber: number) => {
