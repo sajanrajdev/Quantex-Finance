@@ -43,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
   },
   input: {
     borderRadius: 20,
-    /* position: 'relative', */
     backgroundColor: '#181a1c',
     border: '1px solid #ffffff',
     fontSize: 25,
@@ -53,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
       borderColor: '#ffffff',
       backgroundColor: '#181a1c',
       boxShadow: '0 0 0 0.2rem rgba(36,128,108)',
-    }
+    },
   },
   inputAdorment: {
     color: '#ffffff'
@@ -64,7 +63,6 @@ const TokenSelector = withStyles((theme: Theme) =>
   createStyles({
     input: {
       borderRadius: 30,
-      /* position: 'relative', */
       backgroundColor: theme.palette.secondary.main,
       border: '1px solid #ffffff',
       fontSize: 16,
@@ -76,6 +74,9 @@ const TokenSelector = withStyles((theme: Theme) =>
         borderColor: '#ffffff',
         backgroundColor: theme.palette.secondary.main,
         boxShadow: '0 0 0 0.2rem rgba(36,128,108)',
+      },
+      '&:before': {
+        color: '#ffffff'
       },
     },
   }),
@@ -383,10 +384,6 @@ function App() {
             <Paper className={classes.paper} elevation={3} style={{width: 550, height: 150}}>
               <Grid container spacing={2} direction={'column'} alignItems={'center'} justify={'flex-start'}> 
               
-                <Grid item container spacing={1} direction={'row'} alignItems={'center'} justify={'flex-start'}>
-                  <Grid item>
-                    <Typography>From</Typography>
-                  </Grid>
                   <Grid item container spacing={2} direction={'row'} alignItems={'center'} justify={'flex-end'}>
                     <Grid item>
                       {balance ? `Balance: ${(parseFloat(balance)).toFixed(6).toString()} ${token1.symbol}` : 'Balance:'}
@@ -395,7 +392,6 @@ function App() {
                       <BalanceButton balance={balance} selectToken1={selectToken1} wallet={wallet} setInputToken1={setInputToken1} setInputToken2={setInputToken2}></BalanceButton>
                     </Grid>
                   </Grid>
-                </Grid>
 
                 <Grid item container spacing={3} direction={'row'} justify={'center'} alignItems={'center'}>
                   <Grid item>
@@ -408,7 +404,7 @@ function App() {
                     </Select>
                   </Grid>
                   <Grid item>
-                    <OutlinedInput inputProps={{ "data-testid": "Input1" }} className={classes.input} placeholder="0.0" value={inputToken1} style = {{width: 230}} color="primary" onChange={handleInputChange1} disabled={/* (selectToken1=='')||(selectToken2=='') */false} type="number" error={parseFloat(inputToken1)<=0}
+                    <OutlinedInput inputProps={{ "data-testid": "Input1" }} className={classes.input} placeholder="0.0" value={inputToken1} style = {{width: 230}} color="primary" onChange={handleInputChange1} type="number" error={parseFloat(inputToken1)<=0}
                       endAdornment={<InputAdornment className={classes.inputAdorment} position="end">{token1.symbol}</InputAdornment>}/>
                   </Grid>
                 </Grid> 
@@ -419,8 +415,45 @@ function App() {
 
           <Grid item xs={12}>          
             <Paper className={classes.paper} elevation={3} style={{width: 550, height: 150}}>
+              <Grid container spacing={3} direction={'column'} alignItems={'center'} justify={'flex-start'}>
+
+                <Grid item container spacing={2} direction={'row'} alignItems={'center'} justify={'flex-end'}>
+                  <Grid item>
+                    {balance ? `Balance: ${(parseFloat(balance)).toFixed(6).toString()} ${token2.symbol}` : 'Balance:'}
+                  </Grid> 
+                </Grid>
+
+                <Grid item container spacing={3} direction={'row'} justify={'center'} alignItems={'center'}>
+                  <Grid item>
+                    <Select input={<TokenSelector />} inputProps={{ "data-testid": "Select2" }} label="Token" helperText="To" value={selectToken2} style = {{width: 230}} onChange={handleChange2} variant="outlined">
+                      {(spliceNoMutate(tokenslist, selectToken1)).map((option: any | any[]) => (
+                        <MenuItem key={option.id} value={option.symbol}>
+                          {option.symbol}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Grid>
+                  <Grid item>
+                  <OutlinedInput inputProps={{ "data-testid": "Input2" }} className={classes.input}  placeholder="0.0" value={inputToken2} style = {{width: 230}} color="primary" type="number"
+                      endAdornment={<InputAdornment className={classes.inputAdorment} position="end">{token2.symbol}</InputAdornment>}/>
+                  </Grid>
+                </Grid> 
+
+              </Grid>
             </Paper>
           </Grid>
+
+            <Grid item>   
+            <ButtonGroup disableElevation variant="contained" color="primary">
+              <Button name='Estimate' variant="contained" size="large" color="primary" disabled={(inputToken1=='')||(selectToken2=='')||(parseFloat(inputToken1)<=0)} onClick={handleEstimatePriceButton}>
+                Estimate
+              </Button>
+              <Button name='Swap' variant="contained" size="large" color="primary" disabled={!isReadyToSwap()} onClick={performTrade}>
+                Swap
+              </Button>
+            </ButtonGroup>
+          </Grid>
+
         </Grid>
 
         </Container>
