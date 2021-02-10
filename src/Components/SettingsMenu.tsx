@@ -44,7 +44,7 @@ export default function SettingsMenu(handleInputDeadline: any, deadline: string)
 
   return (
     <div>
-      <IconButton onClick={handleOpen}>
+      <IconButton onClick={handleOpen} color="primary">
           <SettingsIcon />
       </IconButton>
 

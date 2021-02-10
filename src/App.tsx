@@ -117,32 +117,6 @@ function App() {
   const NETWORK_ID = 4; // Working network, to be selectable in the future (Mainnet 1, Ropsten 3 and Rinkeby 4)
   const WEI_TO_ETH = 1000000000000000000;
 
-/* const themeLight = createMuiTheme({
-  palette: {
-    primary: {main: '#F4157D'},
-    secondary: {main: "#8f0b49"},
-    background: {
-      default: "#e4f0e2",
-      paper: "#e4f0e2",
-    },
-  },
-  typography: {
-    fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(','),
-  },
-});
-*/
-
   const themeDark = createMuiTheme({
     palette: {
       primary: {main: '#24806c'},
@@ -213,8 +187,12 @@ function App() {
   // Fetch balance of selected Token1
   useEffect(() => {
     fetchBalance(provider, address, token1, setBalance1);
+  }, [token1]);
+
+  // Fetch balance of selected Token2
+  useEffect(() => {
     fetchBalance(provider, address, token2, setBalance2);
-  }, [token1, token2]);
+  }, [token2]);
 
   // Verifies if wallet has already been selected and checks up
   const readyToTransact = async () => {
@@ -466,102 +444,6 @@ function App() {
         </Container>
       </div>
     </ThemeProvider>
-/*     
-  
-
-      <Grid container spacing={2} direction={'column'} alignItems={'center'}>
-        <Grid item>
-          <Paper className={classes.paper} elevation={3} style={{width: 550, height: 400}}>
-            <Box p={1} m={1}>
-              <Grid container spacing={2} direction={'column'} alignItems={'center'} justify={'center'}>
-                <Grid item container spacing={2} direction={'row'} alignItems={'center'} justify={'flex-end'}>
-                  <Grid item>
-                    {balance ? `Balance: ${(parseFloat(balance)).toFixed(6).toString()} ${token1.symbol}` : 'Balance:'}
-                  </Grid> 
-                  <Grid item>
-                    <BalanceButton balance={balance} selectToken1={selectToken1} wallet={wallet} setInputToken1={setInputToken1} setInputToken2={setInputToken2}></BalanceButton>
-                   </Grid>
-                </Grid>
-                <Grid item container spacing={2} direction={'row'} justify={'center'}>
-                  <Grid item>
-                    <TextField inputProps={{ "data-testid": "Select1" }} select label="Token" helperText="From" value={selectToken1} style = {{width: 230}} onChange={handleChange1} variant="outlined">
-                      {(spliceNoMutate(tokenslist, selectToken2)).map((option: any | any[]) => (
-                        <MenuItem key={option.id} value={option.symbol}>
-                          {option.symbol}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item>
-                    <TextField inputProps={{ "data-testid": "Input1" }} label="Amount" placeholder="0.0" variant="outlined" value={inputToken1} style = {{width: 230}} color="primary" onChange={handleInputChange1} disabled={(selectToken1=='')||(selectToken2=='')} type="number" error={parseFloat(inputToken1)<=0}/>
-                  </Grid>
-                </Grid> 
-                <Grid item container spacing={2} direction={'row'} justify={'center'}>
-                  <Grid item>
-                    <TextField inputProps={{ "data-testid": "Select2" }} select label="Token" helperText="To" value={selectToken2} style = {{width: 230}} onChange={handleChange2} variant="outlined">
-                      {(spliceNoMutate(tokenslist, selectToken1)).map((option: any | any[]) => (
-                        <MenuItem key={option.id} value={option.symbol}>
-                          {option.symbol}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item>
-                    <TextField inputProps={{ "data-testid": "Input2" }} label="Estimated Price" placeholder="0.0" variant="outlined" value={inputToken2} style = {{width: 230}} color="primary" disabled type="number"/>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid container spacing={2} direction={'column'} alignItems={'center'}>
-                <Grid item>
-                  <Typography id="discrete-slider-small-steps" gutterBottom>
-                    Slippage Tolerance
-                  </Typography>
-                  <Slider
-                    defaultValue={0.5}
-                    aria-labelledby="discrete-slider-small-steps"
-                    step={0.1}
-                    marks
-                    min={0.0}
-                    max={1.0}
-                    valueLabelDisplay="auto"
-                    onChangeCommitted = { (e, value) => setTolerance(value)}
-                  />
-                </Grid>
-                <Grid container item spacing={5} direction={'row'} justify={'center'}>
-                  <Grid item>
-                    <TextField id="Deadline" label="" size="small" helperText="Deadline" placeholder="20" variant="standard" onChange={handleInputDeadline} value={deadline} style = {{width: 50}} color="primary" type="number" error={(deadline=='')||parseInt(deadline)<=0}/>
-                    min
-                  </Grid>
-                </Grid>  
-              </Grid>
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item>      
-          {loading && <CircularProgress />} 
-        </Grid>
-        <Grid item>   
-          <ButtonGroup disableElevation variant="contained" color="primary">
-            <Button name='Estimate' variant="contained" size="large" color="primary" disabled={(inputToken1=='')||(selectToken2=='')||(parseFloat(inputToken1)<=0)} onClick={handleEstimatePriceButton}>
-              Estimate
-            </Button>
-            <Button name='Swap' variant="contained" size="large" color="primary" disabled={!isReadyToSwap()} onClick={performTrade}>
-              Swap
-            </Button>
-          </ButtonGroup>
-        </Grid>
-      </Grid>
-
-      <br/>
-      <div >
-          <Typography variant='body2' align="center">
-            © 2021 Sajan Rajdev. All Rights Reserved.
-          </Typography> 
-        </div>
-        <br/>
-      </Paper>
-    </div>
-    </ThemeProvider> */
   );
 }
 
