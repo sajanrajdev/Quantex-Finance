@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   }));
 
-export default function TopAppBar({address, onboard, network, onChange, darkmode, handleInputDeadline, deadline}:{address: any | any[] , onboard: any, network: any, onChange: any, darkmode:boolean, handleInputDeadline: any, deadline: string}) {
+export default function TopAppBar({address, onboard, network, onChange, darkmode}:{address: any | any[] , onboard: any, network: any, onChange: any, darkmode:boolean}) {
   const classes = useStyles();
   const [buttonstatus, setButtonStatus] = useState<string | null>('Connect Wallet');
 
@@ -85,7 +85,7 @@ export default function TopAppBar({address, onboard, network, onChange, darkmode
             }}>{buttonstatus}</Button></Grid>
           </Grid>
           <Switch color="secondary" onChange={handleDarkModeSwitch}></Switch>
-          <SeetingsMenu handleInputDeadline={handleInputDeadline} deadline={deadline}/>
+          <SeetingsMenu />
         </Toolbar>
       </AppBar>
     </div>

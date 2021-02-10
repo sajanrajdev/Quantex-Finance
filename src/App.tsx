@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import useGlobal from "./Store";
 import { Fetcher, Trade, Route, TokenAmount, TradeType, Percent } from '@uniswap/sdk'
 import TopAppBar from './Components/AppBar'
 import { getTokenBySymbol, toHex, spliceNoMutate, fetchBalance } from './utils';
@@ -10,7 +11,7 @@ import { initOnboard, initNotify } from './Services/Blocknative'
 import { API } from "bnc-onboard/dist/src/interfaces";
 import { RinkebyTokens } from './Data/RinkbeyTokens'
 import BalanceButton from './Components/BalanceButton'
-import Background from './assets/background-green.jpg';
+import Background from './Assets/background-green.jpg';
 
 
 interface TradeToken {
@@ -89,6 +90,8 @@ let provider: any;
 let ethereum = window.ethereum;
 
 function App() {
+
+  const [globalState, globalActions] = useGlobal();
   
   const [tokenslist, setTokensList] = useState<any | any[]>(RinkebyTokens);
   const [token1, settoken1] = useState<TradeToken>({name: "", symbol: "", address: "", decimals: 0});
@@ -99,7 +102,7 @@ function App() {
   const [inputToken2, setInputToken2] = useState('');
   const [currentTrade, setCurrentTrade] = useState<Trade>();
   const [tolerance, setTolerance] = useState<any>(0.5);
-  const [deadline, setDeadline] = useState<string>('20');
+/*   const [deadline, setDeadline] = useState<string>('20'); */
   const [gasprice, setGasPrice] = useState<string>('20');
 
   const [darkmode, setDarkMode] = useState<boolean>(true);
@@ -170,6 +173,7 @@ function App() {
       }
     })
 
+    console.log(globalState.deadline)
     setOnboard(onboard);
     setNotify(initNotify())
   }, []);
@@ -193,6 +197,11 @@ function App() {
   useEffect(() => {
     fetchBalance(provider, address, token2, setBalance2);
   }, [token2]);
+
+    // Fetch balance of selected Token2
+    useEffect(() => {
+      console.log(globalState.deadline)
+    }, [globalState.deadline]);
 
   // Verifies if wallet has already been selected and checks up
   const readyToTransact = async () => {
@@ -234,7 +243,7 @@ function App() {
         const amountOutMin = toHex(currentTrade.minimumAmountOut(slippageTolerance).raw);
         const path = [ethers.utils.getAddress(token1.address), ethers.utils.getAddress(token2.address)];
         const to = address; // Sends to selected address on wallet
-        const tradedeadline = Math.floor(Date.now() / 1000) + 60 * parseInt(deadline); // Maximum wait time for transaction (20min)
+        const tradedeadline = Math.floor(Date.now() / 1000) + 60 * parseInt(globalState.deadline); // Maximum wait time for transaction (20min)
         const value = toHex(currentTrade.inputAmount.raw);
         const signer = provider.getSigner();
 
@@ -305,27 +314,6 @@ function App() {
     setInputToken2('');
   };
 
-  // Handler for Deadline input
-  const handleInputDeadline = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if(event.target.value==''){
-      setDeadline('');
-    }
-    else{
-      setDeadline(parseFloat(event.target.value).toFixed(0));
-      console.log("test")
-    }
-  };
-  
-  // Handler for Deadline input
-  const handleInputGasPrice = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if(event.target.value==''){
-      setGasPrice('');
-    }
-    else{
-      setGasPrice(parseFloat(event.target.value).toFixed(0));
-    }
-  };
-
   // Handler for Price Estimate button
   const handleEstimatePriceButton = async () => {
     if(walletnetwork==NETWORK_ID) {
@@ -346,7 +334,7 @@ function App() {
   }
 
   const isReadyToSwap = () => {
-    if((inputToken2=='')||(deadline=='')||(gasprice=='')||(walletnetwork==undefined)||(balance1==undefined)||(parseFloat(inputToken1)>parseFloat(balance1))){
+    if((inputToken2=='')||(globalState.deadline=='')||(gasprice=='')||(walletnetwork==undefined)||(balance1==undefined)||(parseFloat(inputToken1)>parseFloat(balance1))){
       return false;
     }
     else {
@@ -358,7 +346,7 @@ function App() {
     <ThemeProvider theme={themeDark}>
       <div className={classes.root} data-testid="App">
         <CssBaseline />
-        <TopAppBar address={address} onboard={onboard} network={walletnetwork} onChange={handleDarkModeSwitch} darkmode={darkmode} handleInputDeadline={handleInputDeadline} deadline={deadline}></TopAppBar>
+        <TopAppBar address={address} onboard={onboard} network={walletnetwork} onChange={handleDarkModeSwitch} darkmode={darkmode}></TopAppBar>
         <br/>
         <br/>
         <Container>

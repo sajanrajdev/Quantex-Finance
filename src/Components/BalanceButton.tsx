@@ -36,15 +36,15 @@ export default function BalanceButton (props: Props) {
 
   const handleBalanceButton = () => {
       if(props.balance != null && props.balance != undefined) {
-          if((parseFloat(props.balance)) > 0.01){
-            props.setInputToken1(((parseFloat(props.balance))-0.01).toString()) // Max input - 0.01 to account for gas usage
-            props.setInputToken2(''); // Reset input 2
-          }
-          else{
-            alert("Insufficient balance!")
-          }
+        if((parseFloat(props.balance)) > 0.01){
+          props.setInputToken1(((parseFloat(props.balance))-0.01).toString()) // Max input - 0.01 to account for gas usage
+          props.setInputToken2(''); // Reset input 2
+        }
+        else{
+          alert("Insufficient balance!")
+        }
       }
-      }
+    }
 
   return(
     <div>

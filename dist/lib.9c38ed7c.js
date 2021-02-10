@@ -177,14 +177,16 @@ exports.WAIT_FOR_SELECTION = WAIT_FOR_SELECTION;
 var UNREADABLE = 'unreadable-device';
 exports.UNREADABLE = UNREADABLE;
 },{}],"../node_modules/@babel/runtime/helpers/inheritsLoose.js":[function(require,module,exports) {
+var setPrototypeOf = require("./setPrototypeOf");
+
 function _inheritsLoose(subClass, superClass) {
   subClass.prototype = Object.create(superClass.prototype);
   subClass.prototype.constructor = subClass;
-  subClass.__proto__ = superClass;
+  setPrototypeOf(subClass, superClass);
 }
 
 module.exports = _inheritsLoose;
-},{}],"../node_modules/@babel/runtime/helpers/isNativeFunction.js":[function(require,module,exports) {
+},{"./setPrototypeOf":"../node_modules/@babel/runtime/helpers/setPrototypeOf.js"}],"../node_modules/@babel/runtime/helpers/isNativeFunction.js":[function(require,module,exports) {
 function _isNativeFunction(fn) {
   return Function.toString.call(fn).indexOf("[native code]") !== -1;
 }
@@ -2419,7 +2421,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
  * Initial settings for connect.
  * It could be changed by passing values into TrezorConnect.init(...) method
  */
-var VERSION = '8.1.20';
+var VERSION = '8.1.22';
 var versionN = VERSION.split('.').map(function (s) {
   return parseInt(s);
 }); // const DIRECTORY = `${ versionN[0] }${ (versionN[1] > 0 ? `.${versionN[1]}` : '') }/`;
@@ -4312,7 +4314,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65041" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60811" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import useGlobal from "../Store";
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { IconButton, Slider, Typography, TextField, Modal, Backdrop, Fade, Grid } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -19,8 +20,9 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function SettingsMenu(handleInputDeadline: any, deadline: string) {
+export default function SettingsMenu() {
   const classes = useStyles();
+  const [globalState, globalActions] = useGlobal();
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => {
@@ -31,16 +33,6 @@ export default function SettingsMenu(handleInputDeadline: any, deadline: string)
     setOpen(false);
   };
 
-  // Handler for Deadline input
-/*   const handleInputDeadline = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if(event.target.value==''){
-      setDeadline('');
-    }
-    else{
-      setDeadline(parseFloat(event.target.value).toFixed(0));
-      console.log("test")
-    }
-  }; */
 
   return (
     <div>
@@ -69,7 +61,6 @@ export default function SettingsMenu(handleInputDeadline: any, deadline: string)
                   </Typography>
                   <Slider
                     defaultValue={0.5}
-                    /* aria-labelledby="discrete-slider-small-steps" */
                     step={0.1}
                     marks
                     min={0.3}
@@ -89,12 +80,12 @@ export default function SettingsMenu(handleInputDeadline: any, deadline: string)
                         size="small" 
                         placeholder="20" 
                         variant="standard" 
-                        /* onChange={handleInputDeadline}  */
-                        /* value={deadline} */ 
+                        onChange={(e) => globalActions.changeDeadline(e)} 
+                        value={globalState.deadline} 
                         style = {{width: 50}} 
                         color="primary" 
                         type="number" 
-                        error={(deadline=='')||parseInt(deadline)<=0}/>
+                        error={(globalState.deadline=='')||parseInt(globalState.deadline)<=0}/>
                     min
                   </Grid>
                 </Grid>  

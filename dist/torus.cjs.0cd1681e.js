@@ -6933,7 +6933,7 @@ module.exports = function (e) {
 
   };
 }, function (e) {
-  e.exports = JSON.parse('{"a":"@toruslabs/torus-embed","b":"1.9.8"}');
+  e.exports = JSON.parse('{"a":"@toruslabs/torus-embed","b":"1.9.9"}');
 }, function (e, t) {
   e.exports = function (e) {
     return e.webpackPolyfill || (e.deprecate = function () {}, e.paths = [], e.children || (e.children = []), Object.defineProperty(e, "loaded", {
@@ -26113,7 +26113,7 @@ module.exports = function (e) {
       Ve = Fe.TWITCH,
       Ke = Fe.DISCORD,
       Je = (De = {}, l()(De, He, !0), l()(De, ze, !0), l()(De, We, !0), l()(De, Ve, !0), l()(De, Ke, !0), De),
-      Ge = "sha384-lscRTDJkcJO1bcogDN4zTIWM/AwGE5QBK/a0g7z0jNIWRgfoHJATLdsMUrfMZf5y",
+      Ge = "sha384-B0Z/dG9ASDdYUny7VD3AFEXT/X3LAJ9DcvsF5pUYlonaxN/5UhK4jPujYTY04ted",
       Xe = ["eth_sendTransaction", "eth_signTypedData", "eth_signTypedData_v3", "eth_signTypedData_v4", "personal_sign"],
       Ye = !0;
 
@@ -27092,7 +27092,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65041" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60811" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

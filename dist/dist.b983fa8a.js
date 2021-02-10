@@ -1245,7 +1245,7 @@ module.exports = function isBuffer(obj) {
 },{}],"../node_modules/authereum/dist/version.js":[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = '0.1.13';
+exports.default = '0.1.14';
 
 },{}],"../node_modules/authereum/node_modules/async/internal/once.js":[function(require,module,exports) {
 "use strict";
@@ -25040,6 +25040,12 @@ class StarkWareProvider {
                 params: input
             });
         });
+        this.getConditionHash = (...params) => __awaiter(this, void 0, void 0, function* () {
+            return this.authereum._postMessageToChild({
+                method: 'starkConditionHash',
+                params
+            });
+        });
         this.signTransaction = (tx) => __awaiter(this, void 0, void 0, function* () {
             return this.authereum.signTransaction(tx);
         });
@@ -26776,7 +26782,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65041" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60811" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

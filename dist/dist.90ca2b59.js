@@ -4699,12 +4699,20 @@ function () {
     return new Address(account_1.generateAddress2(from.buf, salt, initCode));
   };
   /**
+   * Is address equal to another.
+   */
+
+
+  Address.prototype.equals = function (address) {
+    return this.buf.equals(address.buf);
+  };
+  /**
    * Is address zero.
    */
 
 
   Address.prototype.isZero = function () {
-    return this.buf.equals(Address.zero().buf);
+    return this.equals(Address.zero());
   };
   /**
    * Returns hex encoding of address.
@@ -4803,13 +4811,13 @@ exports.toRpcSig = function (v, r, s, chainId) {
 
 
 exports.fromRpcSig = function (sig) {
-  var buf = bytes_1.toBuffer(sig); // NOTE: with potential introduction of chainId this might need to be updated
+  var buf = bytes_1.toBuffer(sig);
 
-  if (buf.length !== 65) {
+  if (buf.length < 65) {
     throw new Error('Invalid signature length');
   }
 
-  var v = buf[64]; // support both versions of `eth_sign` responses
+  var v = bytes_1.bufferToInt(buf.slice(64)); // support both versions of `eth_sign` responses
 
   if (v < 27) {
     v += 27;
@@ -5140,7 +5148,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65041" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60811" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
