@@ -3,8 +3,8 @@ import useGlobal from "./Store";
 import { Fetcher, Trade, Route, TokenAmount, TradeType, Percent } from '@uniswap/sdk'
 import TopAppBar from './Components/AppBar'
 import { getTokenBySymbol, toHex, spliceNoMutate, fetchBalance } from './utils';
-import { TextField, MenuItem, Button, ButtonGroup, OutlinedInput, InputAdornment } from '@material-ui/core';
-import { Paper, CircularProgress, Grid, Box, Slider, Typography, CssBaseline, Container, InputBase, Theme, Select  } from '@material-ui/core';
+import { MenuItem, Button, ButtonGroup, OutlinedInput, InputAdornment } from '@material-ui/core';
+import { Paper, Grid, CssBaseline, Container, InputBase, Theme, Select  } from '@material-ui/core';
 import { ThemeProvider, createMuiTheme, makeStyles, createStyles, withStyles } from '@material-ui/core/styles';
 import {ethers} from 'ethers'
 import { initOnboard, initNotify } from './Services/Blocknative'
@@ -101,12 +101,8 @@ function App() {
   const [inputToken1, setInputToken1] = useState('');
   const [inputToken2, setInputToken2] = useState('');
   const [currentTrade, setCurrentTrade] = useState<Trade>();
-  const [tolerance, setTolerance] = useState<any>(0.5);
-/*   const [deadline, setDeadline] = useState<string>('20'); */
-  const [gasprice, setGasPrice] = useState<string>('20');
 
   const [darkmode, setDarkMode] = useState<boolean>(true);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const [address, setAddress] = useState<string>();
   const [walletnetwork, setWalletNetwork] = useState<number>();
@@ -198,11 +194,6 @@ function App() {
     fetchBalance(provider, address, token2, setBalance2);
   }, [token2]);
 
-    // Fetch balance of selected Token2
-    useEffect(() => {
-      console.log(globalState.deadline)
-    }, [globalState.deadline]);
-
   // Verifies if wallet has already been selected and checks up
   const readyToTransact = async () => {
     if(onboard){
@@ -219,7 +210,6 @@ function App() {
     // Get realtime price of token1 based on paired token2
     const getPrice = async () => {
       if(walletnetwork == NETWORK_ID){
-        setLoading(true);
         const tradetoken1 = await Fetcher.fetchTokenData(walletnetwork, ethers.utils.getAddress(token1.address), provider); 
         const tradetoken2 = await Fetcher.fetchTokenData(walletnetwork, ethers.utils.getAddress(token2.address), provider);
         const pair = await Fetcher.fetchPairData(tradetoken1, tradetoken2, provider);
@@ -229,7 +219,6 @@ function App() {
         console.log("Mid Price:", route.midPrice.toSignificant(6));
         console.log("Next Mid Price:", trade.nextMidPrice.toSignificant(6));
         setCurrentTrade(trade);
-        setLoading(false);
         return trade.executionPrice.toSignificant(6);
       }
       else{
@@ -239,7 +228,7 @@ function App() {
   
     const performTrade = async () => {
       if(currentTrade != undefined && readyToTransact()){
-        const slippageTolerance = new Percent((tolerance*100).toString(), '10000');
+        const slippageTolerance = new Percent((globalState.tolerance*100).toString(), '10000');
         const amountOutMin = toHex(currentTrade.minimumAmountOut(slippageTolerance).raw);
         const path = [ethers.utils.getAddress(token1.address), ethers.utils.getAddress(token2.address)];
         const to = address; // Sends to selected address on wallet
@@ -334,7 +323,7 @@ function App() {
   }
 
   const isReadyToSwap = () => {
-    if((inputToken2=='')||(globalState.deadline=='')||(gasprice=='')||(walletnetwork==undefined)||(balance1==undefined)||(parseFloat(inputToken1)>parseFloat(balance1))){
+    if((inputToken2=='')||(globalState.deadline=='')||(walletnetwork==undefined)||(balance1==undefined)||(parseFloat(inputToken1)>parseFloat(balance1))){
       return false;
     }
     else {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import useGlobal from "../Store";
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { IconButton, Slider, Typography, TextField, Modal, Backdrop, Fade, Grid } from '@material-ui/core';
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function SettingsMenu() {
   const classes = useStyles();
   const [globalState, globalActions] = useGlobal();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
     setOpen(true);
@@ -66,7 +66,7 @@ export default function SettingsMenu() {
                     min={0.3}
                     max={1.0}
                     valueLabelDisplay="auto"
-                    onChangeCommitted = { (e, value) => console.log(value)}
+                    onChangeCommitted = { (e, value) => globalActions.changeTolerance(value)}
                   />
                 </Grid>
                 <Grid container item spacing={5} direction={'row'} justify={'center'}>
