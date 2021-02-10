@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import {Switch, Grid} from '@material-ui/core';
 import {truncateAddress, networkName} from '../utils';
+import SeetingsMenu from './SettingsMenu'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   }));
 
-export default function TopAppBar({address, onboard, network, onChange, darkmode}:{address: any | any[] , onboard: any, network: any, onChange: any, darkmode:boolean}) {
+export default function TopAppBar({address, onboard, network, onChange, darkmode, handleInputDeadline, deadline}:{address: any | any[] , onboard: any, network: any, onChange: any, darkmode:boolean, handleInputDeadline: any, deadline: string}) {
   const classes = useStyles();
   const [buttonstatus, setButtonStatus] = useState<string | null>('Connect Wallet');
 
@@ -84,6 +85,7 @@ export default function TopAppBar({address, onboard, network, onChange, darkmode
             }}>{buttonstatus}</Button></Grid>
           </Grid>
           <Switch color="secondary" onChange={handleDarkModeSwitch}></Switch>
+          <SeetingsMenu handleInputDeadline={handleInputDeadline} deadline={deadline}/>
         </Toolbar>
       </AppBar>
     </div>

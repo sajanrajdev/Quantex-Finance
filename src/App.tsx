@@ -334,6 +334,7 @@ function App() {
     }
     else{
       setDeadline(parseFloat(event.target.value).toFixed(0));
+      console.log("test")
     }
   };
   
@@ -379,7 +380,7 @@ function App() {
     <ThemeProvider theme={themeDark}>
       <div className={classes.root} data-testid="App">
         <CssBaseline />
-        <TopAppBar address={address} onboard={onboard} network={walletnetwork} onChange={handleDarkModeSwitch} darkmode={darkmode}></TopAppBar>
+        <TopAppBar address={address} onboard={onboard} network={walletnetwork} onChange={handleDarkModeSwitch} darkmode={darkmode} handleInputDeadline={handleInputDeadline} deadline={deadline}></TopAppBar>
         <br/>
         <br/>
         <Container>
@@ -431,7 +432,7 @@ function App() {
 
                 <Grid item container spacing={3} direction={'row'} justify={'center'} alignItems={'center'}>
                   <Grid item>
-                    <Select input={<TokenSelector />} inputProps={{ "data-testid": "Select2" }} label="Token" helperText="To" value={selectToken2} style = {{width: 230}} onChange={handleChange2} variant="outlined">
+                    <Select input={<TokenSelector />} inputProps={{ "data-testid": "Select2" }} label="Token" value={selectToken2} style = {{width: 230}} onChange={handleChange2} variant="outlined">
                       {(spliceNoMutate(tokenslist, selectToken1)).map((option: any | any[]) => (
                         <MenuItem key={option.id} value={option.symbol}>
                           {option.symbol}
