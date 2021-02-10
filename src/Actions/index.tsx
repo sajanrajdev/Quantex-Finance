@@ -31,10 +31,12 @@ export const changeInputToken2 = (store: any, value: string) => {
 };
 
 export const changeSelectToken1 = (store: any, value: string) => {
+    console.log(value);
     store.setState( { selectToken1: value } );
 };
 
 export const changeSelectToken2 = (store: any, value: string) => {
+    console.log(value);
     store.setState( { selectToken2: value } );
 };
 
@@ -59,17 +61,15 @@ export const changeBalance2 = (store: any, value: string | undefined) => {
 };
 
 export const changeWallet = (store: any, value: any) => {
-    console.log(value);
+    
     store.setState( { wallet: value } );
 };
 
 export const changeAddress = (store: any, value: string) => {
-    console.log(value);
     store.setState( { address: value } );
 };
 
 export const changeWalletNetwork = (store: any, value: number) => {
-    console.log(value);
     store.setState( { walletnetwork: value } );
 };
 

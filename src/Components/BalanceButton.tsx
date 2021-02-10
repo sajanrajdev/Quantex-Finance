@@ -3,14 +3,6 @@ import useGlobal from "../Store";
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
-type Props = {
-    balance1: string | undefined, 
-    selectToken1: any, 
-    wallet: any, 
-    setInputToken1: any, 
-    setInputToken2: any
-};
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     enabledBtn: {
@@ -31,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   }));
 
-export default function BalanceButton (props: Props) {
+export default function BalanceButton () {
 
   const [globalState, globalActions] = useGlobal();
   const actions: any = globalActions;
@@ -44,8 +36,8 @@ export default function BalanceButton (props: Props) {
   const handleBalanceButton = () => {
       if(balance1 != null && balance1 != undefined) {
         if((parseFloat(balance1)) > 0.01){
-          props.setInputToken1(((parseFloat(balance1))-0.01).toString()) // Max input - 0.01 to account for gas usage
-          props.setInputToken2(''); // Reset input 2
+          actions.changeInputToken1(((parseFloat(balance1))-0.01).toString()) // Max input - 0.01 to account for gas usage
+          actions.changeInputToken2(''); // Reset input 2
         }
         else{
           alert("Insufficient balance!")

@@ -26,7 +26,7 @@ export default function SettingsMenu() {
   const actions: any = globalActions;
 
   return (
-    <Grid container spacing={6} direction={'column'} alignItems={'center'}>
+    {/* <Grid container spacing={6} direction={'column'} alignItems={'center'}>
           
           <Grid item xs={12}>          
             <Paper className={classes.paper} elevation={3} style={{width: 550, height: 150}}>
@@ -102,6 +102,6 @@ export default function SettingsMenu() {
             </ButtonGroup>
           </Grid>
 
-        </Grid>
+        </Grid> */}
   );
 }

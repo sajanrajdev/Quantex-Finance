@@ -72,7 +72,6 @@ const TokenSelector = withStyles((theme: Theme) =>
       fontSize: 16,
       padding: '10px 26px 10px 12px',
       transition: theme.transitions.create(['border-color', 'box-shadow']),
-      // Use the system font instead of the default Roboto font.
       '&:focus': {
         borderRadius: 30,
         borderColor: '#ffffff',
@@ -97,15 +96,10 @@ function App() {
   const [tokenslist, setTokensList] = useState<any | any[]>(RinkebyTokens);
   const [token1, settoken1] = useState<TradeToken>({name: "", symbol: "", address: "", decimals: 0});
   const [token2, settoken2] = useState<TradeToken>({name: "", symbol: "", address: "", decimals: 0});
-  const [selectToken1, setSelectToken1] = useState('');
-  const [selectToken2, setSelectToken2] = useState('');
-  const [inputToken1, setInputToken1] = useState('');
-  const [inputToken2, setInputToken2] = useState('');
+
   const [currentTrade, setCurrentTrade] = useState<Trade>();
 
   const [darkmode, setDarkMode] = useState<boolean>(true);
-
-  /* const [wallet, setWallet] = useState({}); */
 
   const [onboard, setOnboard] = useState<API>()
   const [notify, setNotify] = useState<any>()
@@ -210,7 +204,7 @@ function App() {
         const tradetoken2 = await Fetcher.fetchTokenData(globalState.walletnetwork, ethers.utils.getAddress(token2.address), provider);
         const pair = await Fetcher.fetchPairData(tradetoken1, tradetoken2, provider);
         const route = new Route([pair], tradetoken1);
-        const trade = new Trade(route, new TokenAmount(tradetoken1, (BigInt((parseFloat(inputToken1))*(WEI_TO_ETH))).toString()), TradeType.EXACT_INPUT);
+        const trade = new Trade(route, new TokenAmount(tradetoken1, (BigInt((parseFloat(globalState.inputToken1))*(WEI_TO_ETH))).toString()), TradeType.EXACT_INPUT);
         console.log("Execution Price:", trade.executionPrice.toSignificant(6));
         console.log("Mid Price:", route.midPrice.toSignificant(6));
         console.log("Next Mid Price:", trade.nextMidPrice.toSignificant(6));
@@ -277,26 +271,26 @@ function App() {
 
   // Handler for Token 1 Selector
   const handleChange1 = (event: any) => {
-    setSelectToken1(event.target.value);
+    actions.changeSelectToken1(event.target.value);
     var token_temp = getTokenBySymbol(tokenslist, event.target.value);
     settoken1({name: token_temp.name, symbol: token_temp.symbol, address: token_temp.id, decimals: token_temp.decimals});
-    setInputToken1('');
-    setInputToken2('');
+    actions.changeInputToken1('');
+    actions.changeInputToken2('');
   };
 
   // Handler for Token 1 Input
   const handleInputChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputToken1(event.target.value);
-    setInputToken2('');
+    actions.changeInputToken1(event.target.value);
+    actions.changeInputToken2('');
   };
 
   // Handler for Token 2 Selector
   const handleChange2 = (event: any) => {
-    setSelectToken2(event.target.value);
+    actions.changeSelectToken2(event.target.value);
     var token_temp = getTokenBySymbol(tokenslist, event.target.value);
     settoken2({name: token_temp.name, symbol: token_temp.symbol, address: token_temp.id, decimals: token_temp.decimals});
-    setInputToken1('');
-    setInputToken2('');
+    actions.changeInputToken1('');
+    actions.changeInputToken2('');
   };
 
   // Handler for Price Estimate button
@@ -304,7 +298,7 @@ function App() {
     if(globalState.walletnetwork==NETWORK_ID) {
       var ExecutionPrice = await getPrice();
       if (ExecutionPrice) {
-        setInputToken2((parseFloat(inputToken1)*parseFloat(ExecutionPrice)).toString());
+        actions.changeInputToken2((parseFloat(globalState.inputToken1)*parseFloat(ExecutionPrice)).toString());
       }
     }
     else{
@@ -319,7 +313,7 @@ function App() {
   }
 
   const isReadyToSwap = () => {
-    if((inputToken2=='')||(globalState.deadline=='')||(globalState.walletnetwork==undefined)||(globalState.balance1==undefined)||(parseFloat(inputToken1)>parseFloat(globalState.balance1))){
+    if((globalState.inputToken2=='')||(globalState.deadline=='')||(globalState.walletnetwork==undefined)||(globalState.balance1==undefined)||(parseFloat(globalState.inputToken1)>parseFloat(globalState.balance1))){
       return false;
     }
     else {
@@ -347,14 +341,14 @@ function App() {
                       {globalState.balance1 ? `Balance: ${(parseFloat(globalState.balance1)).toFixed(6).toString()} ${token1.symbol}` : 'Balance:'}
                     </Grid> 
                     <Grid item>
-                      <BalanceButton balance1={globalState.balance1} selectToken1={selectToken1} wallet={globalState.wallet} setInputToken1={setInputToken1} setInputToken2={setInputToken2}></BalanceButton>
+                      <BalanceButton ></BalanceButton>
                     </Grid>
                   </Grid>
 
                 <Grid item container spacing={3} direction={'row'} justify={'center'} alignItems={'center'}>
                   <Grid item>
-                    <Select input={<TokenSelector />} inputProps={{ "data-testid": "Select1" }} placeholder="Token" value={selectToken1} style = {{width: 230}} onChange={handleChange1} variant="outlined">
-                      {(spliceNoMutate(tokenslist, selectToken2)).map((option: any | any[]) => (
+                    <Select input={<TokenSelector />} inputProps={{ "data-testid": "Select1" }} placeholder="Token" value={globalState.selectToken1} style = {{width: 230}} onChange={handleChange1} variant="outlined">
+                      {(spliceNoMutate(tokenslist, globalState.selectToken2)).map((option: any | any[]) => (
                         <MenuItem key={option.id} value={option.symbol}>
                           {option.symbol}
                         </MenuItem>
@@ -362,7 +356,7 @@ function App() {
                     </Select>
                   </Grid>
                   <Grid item>
-                    <OutlinedInput inputProps={{ "data-testid": "Input1" }} className={classes.input} placeholder="0.0" value={inputToken1} style = {{width: 230}} color="primary" onChange={handleInputChange1} type="number" error={parseFloat(inputToken1)<=0}
+                    <OutlinedInput inputProps={{ "data-testid": "Input1" }} className={classes.input} placeholder="0.0" value={globalState.inputToken1} style = {{width: 230}} color="primary" onChange={handleInputChange1} type="number" error={parseFloat(globalState.inputToken1)<=0}
                       endAdornment={<InputAdornment className={classes.inputAdorment} position="end">{token1.symbol}</InputAdornment>}/>
                   </Grid>
                 </Grid> 
@@ -383,8 +377,8 @@ function App() {
 
                 <Grid item container spacing={3} direction={'row'} justify={'center'} alignItems={'center'}>
                   <Grid item>
-                    <Select input={<TokenSelector />} inputProps={{ "data-testid": "Select2" }} label="Token" value={selectToken2} style = {{width: 230}} onChange={handleChange2} variant="outlined">
-                      {(spliceNoMutate(tokenslist, selectToken1)).map((option: any | any[]) => (
+                    <Select input={<TokenSelector />} inputProps={{ "data-testid": "Select2" }} label="Token" value={globalState.selectToken2} style = {{width: 230}} onChange={handleChange2} variant="outlined">
+                      {(spliceNoMutate(tokenslist, globalState.selectToken1)).map((option: any | any[]) => (
                         <MenuItem key={option.id} value={option.symbol}>
                           {option.symbol}
                         </MenuItem>
@@ -392,7 +386,7 @@ function App() {
                     </Select>
                   </Grid>
                   <Grid item>
-                  <OutlinedInput inputProps={{ "data-testid": "Input2" }} className={classes.input}  placeholder="0.0" value={inputToken2} style = {{width: 230}} color="primary" type="number"
+                  <OutlinedInput inputProps={{ "data-testid": "Input2" }} className={classes.input}  placeholder="0.0" value={globalState.inputToken2} style = {{width: 230}} color="primary" type="number"
                       endAdornment={<InputAdornment className={classes.inputAdorment} position="end">{token2.symbol}</InputAdornment>}/>
                   </Grid>
                 </Grid> 
@@ -403,7 +397,7 @@ function App() {
 
             <Grid item>   
             <ButtonGroup disableElevation variant="contained" color="primary" className={classes.disabledButton} >
-              <Button name='Estimate' variant="contained" size="large" color="primary" disabled={(inputToken1=='')||(selectToken2=='')||(parseFloat(inputToken1)<=0)} onClick={handleEstimatePriceButton}>
+              <Button name='Estimate' variant="contained" size="large" color="primary" disabled={(globalState.inputToken1=='')||(globalState.selectToken2=='')||(parseFloat(globalState.inputToken1)<=0)} onClick={handleEstimatePriceButton}>
                 Estimate
               </Button>
               <Button name='Swap' variant="contained" size="large" color="primary" disabled={!isReadyToSwap()} onClick={performTrade}>
