@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import useGlobal from "./Store";
 import { Fetcher, Trade, Route, TokenAmount, TradeType, Percent } from '@uniswap/sdk'
 import TopAppBar from './Components/AppBar'
-import { getTokenBySymbol, toHex, spliceNoMutate, fetchBalance } from './utils';
+import { getTokenBySymbol, toHex, spliceNoMutate } from './utils';
 import { MenuItem, Button, ButtonGroup, OutlinedInput, InputAdornment } from '@material-ui/core';
 import { Paper, Grid, CssBaseline, Container, InputBase, Theme, Select  } from '@material-ui/core';
 import { ThemeProvider, createMuiTheme, makeStyles, createStyles, withStyles } from '@material-ui/core/styles';
@@ -92,6 +92,7 @@ let ethereum = window.ethereum;
 function App() {
 
   const [globalState, globalActions] = useGlobal();
+  const actions: any = globalActions;
   
   const [tokenslist, setTokensList] = useState<any | any[]>(RinkebyTokens);
   const [token1, settoken1] = useState<TradeToken>({name: "", symbol: "", address: "", decimals: 0});
@@ -104,11 +105,7 @@ function App() {
 
   const [darkmode, setDarkMode] = useState<boolean>(true);
 
-  const [address, setAddress] = useState<string>();
-  const [walletnetwork, setWalletNetwork] = useState<number>();
-  const [balance1, setBalance1] = useState<any>();
-  const [balance2, setBalance2] = useState<any>();
-  const [wallet, setWallet] = useState({});
+  /* const [wallet, setWallet] = useState({}); */
 
   const [onboard, setOnboard] = useState<API>()
   const [notify, setNotify] = useState<any>()
@@ -149,11 +146,11 @@ function App() {
   // On Mount 
   useEffect(() => {
     const onboard = initOnboard({
-      address: setAddress,
-      network: setWalletNetwork,
+      address: (address: string)  => actions.changeAddress(address),
+      network: (network: string)  => actions.changeWalletNetwork(network),
       wallet: (wallet: any) => {
         if (wallet.provider) {
-          setWallet(wallet)
+          actions.changeWallet(wallet)
 
           const ethersProvider = new ethers.providers.Web3Provider(
             wallet.provider
@@ -164,12 +161,11 @@ function App() {
           window.localStorage.setItem('selectedWallet', wallet.name)
         } else {
           provider = null
-          setWallet({})
+          actions.changeWallet({})
         }
       }
     })
 
-    console.log(globalState.deadline)
     setOnboard(onboard);
     setNotify(initNotify())
   }, []);
@@ -186,12 +182,12 @@ function App() {
 
   // Fetch balance of selected Token1
   useEffect(() => {
-    fetchBalance(provider, address, token1, setBalance1);
+    actions.fetchBalance(provider, globalState.address, token1, 1);
   }, [token1]);
 
   // Fetch balance of selected Token2
   useEffect(() => {
-    fetchBalance(provider, address, token2, setBalance2);
+    actions.fetchBalance(provider, globalState.address, token2, 2);
   }, [token2]);
 
   // Verifies if wallet has already been selected and checks up
@@ -209,9 +205,9 @@ function App() {
 
     // Get realtime price of token1 based on paired token2
     const getPrice = async () => {
-      if(walletnetwork == NETWORK_ID){
-        const tradetoken1 = await Fetcher.fetchTokenData(walletnetwork, ethers.utils.getAddress(token1.address), provider); 
-        const tradetoken2 = await Fetcher.fetchTokenData(walletnetwork, ethers.utils.getAddress(token2.address), provider);
+      if(globalState.walletnetwork == NETWORK_ID){
+        const tradetoken1 = await Fetcher.fetchTokenData(globalState.walletnetwork, ethers.utils.getAddress(token1.address), provider); 
+        const tradetoken2 = await Fetcher.fetchTokenData(globalState.walletnetwork, ethers.utils.getAddress(token2.address), provider);
         const pair = await Fetcher.fetchPairData(tradetoken1, tradetoken2, provider);
         const route = new Route([pair], tradetoken1);
         const trade = new Trade(route, new TokenAmount(tradetoken1, (BigInt((parseFloat(inputToken1))*(WEI_TO_ETH))).toString()), TradeType.EXACT_INPUT);
@@ -231,7 +227,7 @@ function App() {
         const slippageTolerance = new Percent((globalState.tolerance*100).toString(), '10000');
         const amountOutMin = toHex(currentTrade.minimumAmountOut(slippageTolerance).raw);
         const path = [ethers.utils.getAddress(token1.address), ethers.utils.getAddress(token2.address)];
-        const to = address; // Sends to selected address on wallet
+        const to = globalState.address; // Sends to selected address on wallet
         const tradedeadline = Math.floor(Date.now() / 1000) + 60 * parseInt(globalState.deadline); // Maximum wait time for transaction (20min)
         const value = toHex(currentTrade.inputAmount.raw);
         const signer = provider.getSigner();
@@ -271,8 +267,8 @@ function App() {
   
         const receipt = await tx.wait();
         console.log("Transaction was mined in block:", receipt.blockNumber);
-        fetchBalance(provider, address, token1, setBalance1); // Sets new balane for Token1 after transaction
-        fetchBalance(provider, address, token2, setBalance2); // Sets new balane for Token1 after transaction
+        actions.fetchBalance(provider, globalState.address, token1, 1);; // Sets new balane for Token1 after transaction
+        actions.fetchBalance(provider, globalState.address, token2, 2);; // Sets new balane for Token1 after transaction
       }
       else{
         console.log("Current Trade not defined")
@@ -280,7 +276,7 @@ function App() {
     }  
 
   // Handler for Token 1 Selector
-  const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange1 = (event: any) => {
     setSelectToken1(event.target.value);
     var token_temp = getTokenBySymbol(tokenslist, event.target.value);
     settoken1({name: token_temp.name, symbol: token_temp.symbol, address: token_temp.id, decimals: token_temp.decimals});
@@ -295,7 +291,7 @@ function App() {
   };
 
   // Handler for Token 2 Selector
-  const handleChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange2 = (event: any) => {
     setSelectToken2(event.target.value);
     var token_temp = getTokenBySymbol(tokenslist, event.target.value);
     settoken2({name: token_temp.name, symbol: token_temp.symbol, address: token_temp.id, decimals: token_temp.decimals});
@@ -305,7 +301,7 @@ function App() {
 
   // Handler for Price Estimate button
   const handleEstimatePriceButton = async () => {
-    if(walletnetwork==NETWORK_ID) {
+    if(globalState.walletnetwork==NETWORK_ID) {
       var ExecutionPrice = await getPrice();
       if (ExecutionPrice) {
         setInputToken2((parseFloat(inputToken1)*parseFloat(ExecutionPrice)).toString());
@@ -323,7 +319,7 @@ function App() {
   }
 
   const isReadyToSwap = () => {
-    if((inputToken2=='')||(globalState.deadline=='')||(walletnetwork==undefined)||(balance1==undefined)||(parseFloat(inputToken1)>parseFloat(balance1))){
+    if((inputToken2=='')||(globalState.deadline=='')||(globalState.walletnetwork==undefined)||(globalState.balance1==undefined)||(parseFloat(inputToken1)>parseFloat(globalState.balance1))){
       return false;
     }
     else {
@@ -335,7 +331,7 @@ function App() {
     <ThemeProvider theme={themeDark}>
       <div className={classes.root} data-testid="App">
         <CssBaseline />
-        <TopAppBar address={address} onboard={onboard} network={walletnetwork} onChange={handleDarkModeSwitch} darkmode={darkmode}></TopAppBar>
+        <TopAppBar address={globalState.address} onboard={onboard} network={globalState.walletnetwork} onChange={handleDarkModeSwitch} darkmode={darkmode}></TopAppBar>
         <br/>
         <br/>
         <Container>
@@ -348,10 +344,10 @@ function App() {
               
                   <Grid item container spacing={2} direction={'row'} alignItems={'center'} justify={'flex-end'}>
                     <Grid item>
-                      {balance1 ? `Balance: ${(parseFloat(balance1)).toFixed(6).toString()} ${token1.symbol}` : 'Balance:'}
+                      {globalState.balance1 ? `Balance: ${(parseFloat(globalState.balance1)).toFixed(6).toString()} ${token1.symbol}` : 'Balance:'}
                     </Grid> 
                     <Grid item>
-                      <BalanceButton balance={balance1} selectToken1={selectToken1} wallet={wallet} setInputToken1={setInputToken1} setInputToken2={setInputToken2}></BalanceButton>
+                      <BalanceButton balance1={globalState.balance1} selectToken1={selectToken1} wallet={globalState.wallet} setInputToken1={setInputToken1} setInputToken2={setInputToken2}></BalanceButton>
                     </Grid>
                   </Grid>
 
@@ -381,7 +377,7 @@ function App() {
 
                 <Grid item container spacing={2} direction={'row'} alignItems={'center'} justify={'flex-end'}>
                   <Grid item>
-                    {balance2 ? `Balance: ${(parseFloat(balance2)).toFixed(6).toString()} ${token2.symbol}` : 'Balance:'}
+                    {globalState.balance2 ? `Balance: ${(parseFloat(globalState.balance2)).toFixed(6).toString()} ${token2.symbol}` : 'Balance:'}
                   </Grid> 
                 </Grid>
 

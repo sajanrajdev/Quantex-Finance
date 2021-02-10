@@ -139,19 +139,6 @@
     return (parseFloat(balance)/(10**parseInt(token.decimals))).toString();
   }
 
-  const fetchBalance = async (provider: any, address: string | undefined, token1: any, setBalance: any) => {
-    if(provider && address!=null){
-      if(token1.symbol == 'WETH'){
-        let ETHBalance = await provider.getBalance(address);
-        setBalance(ethers.utils.formatEther(ETHBalance))
-      }
-      else{
-        let ERC20Balance = await getERC20TokenBalance(token1, address, provider);
-        setBalance(ERC20Balance);
-      }
-    }
-  };
-
   export {percentageFormatter, 
     currencyFormatter, 
     capitalize, 
@@ -164,4 +151,4 @@
     truncateAddress,
     spliceNoMutate,
     getERC20TokenBalance,
-    fetchBalance}
+    }

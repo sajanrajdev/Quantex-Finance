@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function SettingsMenu() {
   const classes = useStyles();
   const [globalState, globalActions] = useGlobal();
+  const actions: any = globalActions;
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
@@ -66,7 +67,7 @@ export default function SettingsMenu() {
                     min={0.3}
                     max={1.0}
                     valueLabelDisplay="auto"
-                    onChangeCommitted = { (e, value) => globalActions.changeTolerance(value)}
+                    onChangeCommitted = { (e, value) => actions.changeTolerance(value)}
                   />
                 </Grid>
                 <Grid container item spacing={5} direction={'row'} justify={'center'}>
@@ -80,7 +81,7 @@ export default function SettingsMenu() {
                         size="small" 
                         placeholder="20" 
                         variant="standard" 
-                        onChange={(e) => globalActions.changeDeadline(e)} 
+                        onChange={(e) => actions.changeDeadline(e)} 
                         value={globalState.deadline} 
                         style = {{width: 50}} 
                         color="primary" 
