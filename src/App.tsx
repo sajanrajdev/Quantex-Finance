@@ -56,6 +56,9 @@ const useStyles = makeStyles((theme) => ({
   },
   inputAdorment: {
     color: '#ffffff'
+  },
+  disabledButton: {
+    backgroundColor: '#494d54',
   }
 }));
 
@@ -104,7 +107,8 @@ function App() {
 
   const [address, setAddress] = useState<string>();
   const [walletnetwork, setWalletNetwork] = useState<number>();
-  const [balance, setBalance] = useState<any>();
+  const [balance1, setBalance1] = useState<any>();
+  const [balance2, setBalance2] = useState<any>();
   const [wallet, setWallet] = useState({});
 
   const [onboard, setOnboard] = useState<API>()
@@ -208,8 +212,9 @@ function App() {
 
   // Fetch balance of selected Token1
   useEffect(() => {
-    fetchBalance(provider, address, token1, setBalance);
-  }, [token1]);
+    fetchBalance(provider, address, token1, setBalance1);
+    fetchBalance(provider, address, token2, setBalance2);
+  }, [token1, token2]);
 
   // Verifies if wallet has already been selected and checks up
   const readyToTransact = async () => {
@@ -290,7 +295,8 @@ function App() {
   
         const receipt = await tx.wait();
         console.log("Transaction was mined in block:", receipt.blockNumber);
-        fetchBalance(provider, address, token1, setBalance); // Sets new balane for Token1 after transaction
+        fetchBalance(provider, address, token1, setBalance1); // Sets new balane for Token1 after transaction
+        fetchBalance(provider, address, token2, setBalance2); // Sets new balane for Token1 after transaction
       }
       else{
         console.log("Current Trade not defined")
@@ -361,7 +367,7 @@ function App() {
   }
 
   const isReadyToSwap = () => {
-    if((inputToken2=='')||(deadline=='')||(gasprice=='')||(walletnetwork==undefined)||(balance==undefined)||(parseFloat(inputToken1)>parseFloat(balance))){
+    if((inputToken2=='')||(deadline=='')||(gasprice=='')||(walletnetwork==undefined)||(balance1==undefined)||(parseFloat(inputToken1)>parseFloat(balance1))){
       return false;
     }
     else {
@@ -386,10 +392,10 @@ function App() {
               
                   <Grid item container spacing={2} direction={'row'} alignItems={'center'} justify={'flex-end'}>
                     <Grid item>
-                      {balance ? `Balance: ${(parseFloat(balance)).toFixed(6).toString()} ${token1.symbol}` : 'Balance:'}
+                      {balance1 ? `Balance: ${(parseFloat(balance1)).toFixed(6).toString()} ${token1.symbol}` : 'Balance:'}
                     </Grid> 
                     <Grid item>
-                      <BalanceButton balance={balance} selectToken1={selectToken1} wallet={wallet} setInputToken1={setInputToken1} setInputToken2={setInputToken2}></BalanceButton>
+                      <BalanceButton balance={balance1} selectToken1={selectToken1} wallet={wallet} setInputToken1={setInputToken1} setInputToken2={setInputToken2}></BalanceButton>
                     </Grid>
                   </Grid>
 
@@ -419,7 +425,7 @@ function App() {
 
                 <Grid item container spacing={2} direction={'row'} alignItems={'center'} justify={'flex-end'}>
                   <Grid item>
-                    {balance ? `Balance: ${(parseFloat(balance)).toFixed(6).toString()} ${token2.symbol}` : 'Balance:'}
+                    {balance2 ? `Balance: ${(parseFloat(balance2)).toFixed(6).toString()} ${token2.symbol}` : 'Balance:'}
                   </Grid> 
                 </Grid>
 
@@ -444,7 +450,7 @@ function App() {
           </Grid>
 
             <Grid item>   
-            <ButtonGroup disableElevation variant="contained" color="primary">
+            <ButtonGroup disableElevation variant="contained" color="primary" className={classes.disabledButton} >
               <Button name='Estimate' variant="contained" size="large" color="primary" disabled={(inputToken1=='')||(selectToken2=='')||(parseFloat(inputToken1)<=0)} onClick={handleEstimatePriceButton}>
                 Estimate
               </Button>
