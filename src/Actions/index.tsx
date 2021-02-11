@@ -100,10 +100,10 @@ export const changeProvider = (store: any, value: any) => {
 };
 
 
-export const fetchBalance = async (store: any, provider: any, address: string | undefined, token1: any, tokenNumber: number) => {
+export const fetchBalance = async (store: any, provider: any, address: string | undefined, token: any, tokenNumber: number) => {
 
     if(provider && address!=null){
-      if(token1.symbol == 'WETH'){
+      if(token.symbol == 'WETH'){
         let ETHBalance = await provider.getBalance(address);
         if(tokenNumber==1){
             store.setState({balance1: ethers.utils.formatEther(ETHBalance)})
@@ -113,7 +113,7 @@ export const fetchBalance = async (store: any, provider: any, address: string | 
         }
       }
       else{
-        let ERC20Balance = await getERC20TokenBalance(token1, address, provider);
+        let ERC20Balance = await getERC20TokenBalance(token, address, provider);
         if(tokenNumber==1){
             store.setState({balance1: ERC20Balance});
         }
