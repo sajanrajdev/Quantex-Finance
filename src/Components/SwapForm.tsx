@@ -5,6 +5,7 @@ import { makeStyles, createStyles, withStyles } from '@material-ui/core/styles';
 import { Trade } from '@uniswap/sdk'
 import BalanceButton from './BalanceButton'
 import ControlButtons from './ControlButtons'
+import ArrowButton from './ArrowButton'
 import { getTokenBySymbol, spliceNoMutate } from '../utils';
 
 const useStyles = makeStyles((theme) => ({
@@ -90,71 +91,80 @@ export default function SwapForm({currentTrade, setCurrentTrade}:{currentTrade: 
 
   return (
     <Grid container spacing={6} direction={'column'} alignItems={'center'}>
-      
-      <Grid item xs={12}>          
-        <Paper className={classes.paper} elevation={3} style={{width: 550, height: 150}}>
-          <Grid container spacing={2} direction={'column'} alignItems={'center'} justify={'flex-start'}> 
-          
+      <Grid container spacing={0} direction={'column'} alignItems={'center'}>
+        
+        <Grid item xs={12}>          
+          <Paper className={classes.paper} elevation={3} style={{width: 550, height: 150}}>
+            <Grid container spacing={2} direction={'column'} alignItems={'center'} justify={'flex-start'}> 
+            
+                <Grid item container spacing={2} direction={'row'} alignItems={'center'} justify={'flex-end'}>
+                  <Grid item>
+                    {globalState.balance1 ? `Balance: ${(parseFloat(globalState.balance1)).toFixed(6).toString()} ${globalState.token1.symbol}` : 'Balance:'}
+                  </Grid> 
+                  <Grid item>
+                    <BalanceButton ></BalanceButton>
+                  </Grid>
+                </Grid>
+
+              <Grid item container spacing={3} direction={'row'} justify={'center'} alignItems={'center'}>
+                <Grid item>
+                  <Select input={<TokenSelector />} inputProps={{ "data-testid": "Select1" }} placeholder="Token" value={globalState.selectToken1} style = {{width: 230}} onChange={handleChange1} variant="outlined">
+                    {(spliceNoMutate(globalState.tokenslist, globalState.selectToken2)).map((option: any | any[]) => (
+                      <MenuItem key={option.id} value={option.symbol}>
+                        {option.symbol}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
+                <Grid item>
+                  <OutlinedInput inputProps={{ "data-testid": "Input1" }} className={classes.input} placeholder="0.0" value={globalState.inputToken1} style = {{width: 230}} color="primary" onChange={handleInputChange1} type="number" error={parseFloat(globalState.inputToken1)<=0}
+                    endAdornment={<InputAdornment className={classes.inputAdorment} position="end">{globalState.token1.symbol}</InputAdornment>}/>
+                </Grid>
+              </Grid> 
+
+            </Grid>
+          </Paper>
+        </Grid>
+
+        <Grid item>
+          <ArrowButton />
+        </Grid>
+        <br/>
+
+        <Grid item xs={12}>          
+          <Paper className={classes.paper} elevation={3} style={{width: 550, height: 150}}>
+            <Grid container spacing={3} direction={'column'} alignItems={'center'} justify={'flex-start'}>
+
               <Grid item container spacing={2} direction={'row'} alignItems={'center'} justify={'flex-end'}>
                 <Grid item>
-                  {globalState.balance1 ? `Balance: ${(parseFloat(globalState.balance1)).toFixed(6).toString()} ${globalState.token1.symbol}` : 'Balance:'}
+                  {globalState.balance2 ? `Balance: ${(parseFloat(globalState.balance2)).toFixed(6).toString()} ${globalState.token2.symbol}` : 'Balance:'}
                 </Grid> 
+              </Grid>
+
+              <Grid item container spacing={3} direction={'row'} justify={'center'} alignItems={'center'}>
                 <Grid item>
-                  <BalanceButton ></BalanceButton>
+                  <Select input={<TokenSelector />} inputProps={{ "data-testid": "Select2" }} label="Token" value={globalState.selectToken2} style = {{width: 230}} onChange={handleChange2} variant="outlined">
+                    {(spliceNoMutate(globalState.tokenslist, globalState.selectToken1)).map((option: any | any[]) => (
+                      <MenuItem key={option.id} value={option.symbol}>
+                        {option.symbol}
+                      </MenuItem>
+                    ))}
+                  </Select>
                 </Grid>
-              </Grid>
-
-            <Grid item container spacing={3} direction={'row'} justify={'center'} alignItems={'center'}>
-              <Grid item>
-                <Select input={<TokenSelector />} inputProps={{ "data-testid": "Select1" }} placeholder="Token" value={globalState.selectToken1} style = {{width: 230}} onChange={handleChange1} variant="outlined">
-                  {(spliceNoMutate(globalState.tokenslist, globalState.selectToken2)).map((option: any | any[]) => (
-                    <MenuItem key={option.id} value={option.symbol}>
-                      {option.symbol}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Grid>
-              <Grid item>
-                <OutlinedInput inputProps={{ "data-testid": "Input1" }} className={classes.input} placeholder="0.0" value={globalState.inputToken1} style = {{width: 230}} color="primary" onChange={handleInputChange1} type="number" error={parseFloat(globalState.inputToken1)<=0}
-                  endAdornment={<InputAdornment className={classes.inputAdorment} position="end">{globalState.token1.symbol}</InputAdornment>}/>
-              </Grid>
-            </Grid> 
-
-          </Grid>
-        </Paper>
-      </Grid>
-
-      <Grid item xs={12}>          
-        <Paper className={classes.paper} elevation={3} style={{width: 550, height: 150}}>
-          <Grid container spacing={3} direction={'column'} alignItems={'center'} justify={'flex-start'}>
-
-            <Grid item container spacing={2} direction={'row'} alignItems={'center'} justify={'flex-end'}>
-              <Grid item>
-                {globalState.balance2 ? `Balance: ${(parseFloat(globalState.balance2)).toFixed(6).toString()} ${globalState.token2.symbol}` : 'Balance:'}
+                <Grid item>
+                <OutlinedInput inputProps={{ "data-testid": "Input2" }} className={classes.input}  placeholder="0.0" value={globalState.inputToken2} style = {{width: 230}} color="primary" type="number"
+                    endAdornment={<InputAdornment className={classes.inputAdorment} position="end">{globalState.token2.symbol}</InputAdornment>}/>
+                </Grid>
               </Grid> 
+
             </Grid>
+          </Paper>
+        </Grid>
 
-            <Grid item container spacing={3} direction={'row'} justify={'center'} alignItems={'center'}>
-              <Grid item>
-                <Select input={<TokenSelector />} inputProps={{ "data-testid": "Select2" }} label="Token" value={globalState.selectToken2} style = {{width: 230}} onChange={handleChange2} variant="outlined">
-                  {(spliceNoMutate(globalState.tokenslist, globalState.selectToken1)).map((option: any | any[]) => (
-                    <MenuItem key={option.id} value={option.symbol}>
-                      {option.symbol}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Grid>
-              <Grid item>
-              <OutlinedInput inputProps={{ "data-testid": "Input2" }} className={classes.input}  placeholder="0.0" value={globalState.inputToken2} style = {{width: 230}} color="primary" type="number"
-                  endAdornment={<InputAdornment className={classes.inputAdorment} position="end">{globalState.token2.symbol}</InputAdornment>}/>
-              </Grid>
-            </Grid> 
-
-          </Grid>
-        </Paper>
       </Grid>
 
       <Grid item>   
+        <br/>
         <ControlButtons currentTrade={currentTrade} setCurrentTrade={setCurrentTrade}/>
       </Grid>
 

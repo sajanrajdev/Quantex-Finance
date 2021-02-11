@@ -95,6 +95,7 @@ function App() {
         <br/>
         <br/>
         <Container>
+          <br/>
           <SwapForm currentTrade={currentTrade} setCurrentTrade={setCurrentTrade}/>
         </Container>
       </div>

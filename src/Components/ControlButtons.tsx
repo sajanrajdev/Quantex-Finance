@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ButtonGroup, Button, Theme } from '@material-ui/core';
 import { makeStyles  } from '@material-ui/core/styles';
 import { Fetcher, Trade, Route, TokenAmount, TradeType, Percent } from '@uniswap/sdk'
@@ -27,6 +27,13 @@ const ControlButtons = ({currentTrade, setCurrentTrade}:{currentTrade: Trade | u
     const actions: any = globalActions;
 
     let provider = globalState.provider;
+
+  useEffect(() => { // Handler for change 
+    if(globalState.arrowFlag){
+      getPrice();
+      actions.changeArrowFlag(false);
+    }
+  }, [globalState.arrowFlag]);
 
   // Handler for Price Estimate button
   const handleEstimatePriceButton = async () => {
@@ -128,7 +135,7 @@ const ControlButtons = ({currentTrade, setCurrentTrade}:{currentTrade: Trade | u
   }  
 
   const isReadyToSwap = () => {
-    if((globalState.inputToken2=='')||(globalState.deadline=='')||(globalState.walletnetwork==undefined)||(globalState.balance1==undefined)||(parseFloat(globalState.inputToken1)>parseFloat(globalState.balance1))){
+    if((globalState.inputToken2=='')||(globalState.inputToken1=='')||(globalState.deadline=='')||(globalState.walletnetwork==undefined)||(globalState.balance1==undefined)||(parseFloat(globalState.inputToken1)>parseFloat(globalState.balance1))){
       return false;
     }
     else {

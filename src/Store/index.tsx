@@ -13,6 +13,7 @@ const initialState = {
   inputToken2: '',
   selectToken1: '',
   selectToken2: '',
+  arrowFlag: false,
   token1: {
     name: '',
     symbol: '',

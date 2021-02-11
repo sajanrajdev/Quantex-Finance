@@ -79,6 +79,10 @@ export const changeDarkMode = (store: any, value: boolean) => {
     store.setState( { darkmode: value } );
 };
 
+export const changeArrowFlag = (store: any, value: boolean) => {
+    store.setState( { arrowFlag: value } );
+};
+
 export const changeOnboard = (store: any, value: API) => {
     store.setState( { onboard: value } );
 };
@@ -92,9 +96,9 @@ export const changeTokenList = (store: any, value: any | any[]) => {
 };
 
 export const changeProvider = (store: any, value: any) => {
-    console.log(value)
     store.setState( { provider: value } );
 };
+
 
 export const fetchBalance = async (store: any, provider: any, address: string | undefined, token1: any, tokenNumber: number) => {
 
