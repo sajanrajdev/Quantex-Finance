@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   input: {
     borderRadius: 20,
     backgroundColor: theme.palette.secondary.main,
-    border: '1px solid #ffffff',
+    border: `1px solid ${theme.palette.type == 'dark' ? '#ffffff' : '#000000'}`,//'1px solid #ffffff',
     fontSize: 25,
     padding: '2px 10px 2px 3px',
     '&:focus': {
@@ -52,7 +52,7 @@ const TokenSelector = withStyles((theme: Theme) =>
     input: {
       borderRadius: 30,
       backgroundColor: theme.palette.secondary.main,
-      border: '1px solid #ffffff',
+      border: `1px solid ${theme.palette.type == 'dark' ? '#ffffff' : '#000000'}`,
       fontSize: 16,
       padding: '10px 26px 10px 12px',
       transition: theme.transitions.create(['border-color', 'box-shadow']),
