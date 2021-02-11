@@ -14,7 +14,6 @@ import { DataGrid } from '@material-ui/data-grid';
   
   export default function Tokentable({coindata}:{coindata:any | any[]}) {
 
-
     return (
       <div style={{ height: 1200, width: '100%' }}>
         <DataGrid rows={coindata} columns={columns} pageSize={20} checkboxSelection={false}/>

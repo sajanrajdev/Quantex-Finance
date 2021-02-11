@@ -71,6 +71,10 @@ export const changeWalletNetwork = (store: any, value: number) => {
     store.setState( { walletnetwork: value } );
 };
 
+export const changeWorkingNetwork = (store: any, value: number) => {
+    store.setState( { workingnetwork: value } );
+};
+
 export const changeDarkMode = (store: any, value: boolean) => {
     store.setState( { darkmode: value } );
 };
@@ -83,13 +87,22 @@ export const changeNotify = (store: any, value: any) => {
     store.setState( { notify: value } );
 };
 
+export const changeTokenList = (store: any, value: any | any[]) => {
+    store.setState( { tokenslist: value } );
+};
+
+export const changeProvider = (store: any, value: any) => {
+    console.log(value)
+    store.setState( { provider: value } );
+};
+
 export const fetchBalance = async (store: any, provider: any, address: string | undefined, token1: any, tokenNumber: number) => {
 
     if(provider && address!=null){
       if(token1.symbol == 'WETH'){
         let ETHBalance = await provider.getBalance(address);
         if(tokenNumber==1){
-            store.setState({balances1: ethers.utils.formatEther(ETHBalance)})
+            store.setState({balance1: ethers.utils.formatEther(ETHBalance)})
         }
         else if(tokenNumber==2){
             store.setState({balance2: ethers.utils.formatEther(ETHBalance)})
@@ -107,5 +120,6 @@ export const fetchBalance = async (store: any, provider: any, address: string | 
     }
   };
 
+  
 
 
