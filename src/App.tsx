@@ -8,22 +8,15 @@ import {ethers} from 'ethers'
 import { initOnboard, initNotify } from './Services/Blocknative'
 import SwapForm from './Components/SwapForm'
 import Background from './Assets/background-green.jpg';
+import BackgrounfLight from './Assets/background-light.png';
 import themeDark from './Themes/darkTheme'
+import themeLight from './Themes/lightTheme'
 
 declare global {
   interface Window {
       ethereum:any;
   }
 }
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    minHeight: '100vh',
-    backgroundImage: `url(${Background})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
-  },
-}));
 
 let provider: any;
 
@@ -35,6 +28,15 @@ function App() {
   const [currentTrade, setCurrentTrade] = useState<Trade>();
 
   const NETWORK_ID = 4; // Working network, to be selectable in the future (Mainnet 1, Ropsten 3 and Rinkeby 4)
+
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      minHeight: '100vh',
+      backgroundImage: `url(${globalState.darkmode ? Background : BackgrounfLight})`,
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover',
+    },
+  }));
 
   const classes = useStyles(); 
 
@@ -88,7 +90,7 @@ function App() {
   }, [globalState.token2]);
   
   return (
-    <ThemeProvider theme={themeDark}>
+    <ThemeProvider theme={globalState.darkmode ? themeDark : themeLight}>
       <div className={classes.root} data-testid="App">
         <CssBaseline />
         <TopAppBar onboard={globalState.onboard}></TopAppBar>

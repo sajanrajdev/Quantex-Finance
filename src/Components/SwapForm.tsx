@@ -10,7 +10,7 @@ import { getTokenBySymbol, spliceNoMutate } from '../utils';
 const useStyles = makeStyles((theme) => ({
   paper: {
     borderRadius: 26,
-    background: '#040404',
+    background: theme.palette.background.paper,
     border: 0,
     height: 48,
     padding: '0 30px',
@@ -18,15 +18,15 @@ const useStyles = makeStyles((theme) => ({
   },
   input: {
     borderRadius: 20,
-    backgroundColor: '#181a1c',
+    backgroundColor: theme.palette.secondary.main,
     border: '1px solid #ffffff',
     fontSize: 25,
     padding: '2px 10px 2px 3px',
     '&:focus': {
       borderRadius: 20,
       borderColor: '#ffffff',
-      backgroundColor: '#181a1c',
-      boxShadow: '0 0 0 0.2rem rgba(36,128,108)',
+      backgroundColor: theme.palette.secondary.main,
+      boxShadow: `0 0 0 0.2rem ${theme.palette.primary.main}`//'0 0 0 0.2rem rgba(36,128,108)',
     },
   },
   inputAdorment: {
@@ -60,7 +60,7 @@ const TokenSelector = withStyles((theme: Theme) =>
         borderRadius: 30,
         borderColor: '#ffffff',
         backgroundColor: theme.palette.secondary.main,
-        boxShadow: '0 0 0 0.2rem rgba(36,128,108)',
+        boxShadow: `0 0 0 0.2rem ${theme.palette.primary.main}`,
       },
       '&:before': {
         color: '#ffffff'
@@ -128,7 +128,7 @@ export default function SwapForm({currentTrade, setCurrentTrade}:{currentTrade: 
               <Grid item container spacing={3} direction={'row'} justify={'center'} alignItems={'center'}>
                 <Grid item>
                 <FormControl>  
-                  <InputLabel id="demo-customized-select-label">Select Token</InputLabel>
+                  <InputLabel id="demo-customized-select-label">&nbsp;&nbsp;Select a Token</InputLabel>
                   <Select input={<TokenSelector />} inputProps={{ "data-testid": "Select1" }} placeholder="Token" value={globalState.selectToken1} style = {{width: 230}} onChange={handleChange1} variant="outlined">
                     {(spliceNoMutate(globalState.tokenslist, globalState.selectToken2)).map((option: any | any[]) => (
                       <MenuItem key={option.id} value={option.symbol}>
@@ -160,7 +160,7 @@ export default function SwapForm({currentTrade, setCurrentTrade}:{currentTrade: 
               <Grid item container spacing={1} direction={'row'} alignItems={'center'} justify={'flex-start'}>
 
                 <Grid item xs={3}>
-                  <b>To (Estimate)</b>
+                  <b>To (estimated)</b>
                 </Grid>
                 <Grid item container xs={9} spacing={2} direction={'row'} alignItems={'center'} justify={'flex-end'}>
                   <Grid item>
@@ -173,7 +173,7 @@ export default function SwapForm({currentTrade, setCurrentTrade}:{currentTrade: 
               <Grid item container spacing={3} direction={'row'} justify={'center'} alignItems={'center'}>
                 <Grid item>
                 <FormControl>  
-                  <InputLabel id="demo-customized-select-label">Select Token</InputLabel>
+                  <InputLabel id="demo-customized-select-label">&nbsp;&nbsp;Select a Token</InputLabel>
                   <Select input={<TokenSelector />} inputProps={{ "data-testid": "Select2" }} label="Token" value={globalState.selectToken2} style = {{width: 230}} onChange={handleChange2} variant="outlined">
                     {(spliceNoMutate(globalState.tokenslist, globalState.selectToken1)).map((option: any | any[]) => (
                       <MenuItem key={option.id} value={option.symbol}>

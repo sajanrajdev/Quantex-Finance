@@ -144,7 +144,7 @@ const ControlButtons = ({currentTrade, setCurrentTrade}:{currentTrade: Trade | u
   }  
 
       return (
-          <ButtonGroup disableElevation variant="contained" color="primary" className={classes.disabledButton} >
+          <ButtonGroup disableElevation variant="contained" color="primary">
             <Button name='Estimate' variant="contained" size="large" color="primary" disabled={(globalState.inputToken1=='')||(globalState.selectToken2=='')||(parseFloat(globalState.inputToken1)<=0)} onClick={handleEstimatePriceButton}>
               Estimate
             </Button>

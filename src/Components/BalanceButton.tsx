@@ -49,7 +49,7 @@ export default function BalanceButton () {
     <div>
       {wallet && 
         <div>
-          <Button variant="outlined" color="primary" className= {classes.enabledBtn} classes={{ disabled: classes.disabledBtn }} onClick={handleBalanceButton} disabled={(balance1 == '' || balance1 == undefined)}>
+          <Button variant="outlined" color="primary" className= {classes.enabledBtn} onClick={handleBalanceButton} disabled={(balance1 == '' || balance1 == undefined)}>
             <div>MAX</div>
           </Button>
         </div>}
